@@ -1,0 +1,30 @@
+@startuml Sequence Diagram
+actor "Власник" as Owner order 10
+actor "Користувач послуг"  as User  order 5
+actor "Технічний консультант"  as Tech  order 11
+' actor "Оператор зв'язку"  as Operator  order 5
+' actor "Керівник польоту"  as FlyControl  order 5
+
+participant "Ракета Носій" as Rocket order 15 #99FF99 
+
+
+User -> Owner: Запит на використання
+activate User
+activate Owner
+Owner -> Tech: Запит доступності ракети
+activate Tech
+Tech -> Rocket: Наявність та стан ракети 
+activate Rocket
+Rocket -> Tech: Дані про ракету
+deactivate Rocket
+Tech -> Owner: Ракета доступна 
+deactivate Tech
+Owner -> User: Використання можливе, надсилання договору 
+deactivate User 
+deactivate Owner
+
+User -> Owner: Згода та надсилання грошей
+Owner -> User: Надання ракети 
+
+
+@enduml
