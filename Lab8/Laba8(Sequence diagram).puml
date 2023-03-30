@@ -1,30 +1,144 @@
 @startuml Sequence Diagram
 actor "Власник" as Owner order 10
 actor "Користувач послуг"  as User  order 5
-actor "Технічний консультант"  as Tech  order 11
-' actor "Оператор зв'язку"  as Operator  order 5
-' actor "Керівник польоту"  as FlyControl  order 5
+' actor "Технічний консультант"  as Tech  order 11
+
+' actor "Обслуговуючий персонал" as  Personal  order 11
+' actor "Оператор зв'язку"  as Operator  order 12
+actor "Диспетчер ракети"  as DispRocket  order 13
+actor "Диспетчер плавучого судна"  as DispSudno  order 14
+actor "Керівник польоту"  as FlyControl  order 11
+' actor "Метеоролог"  as Meteorolog  order 13
 
 participant "Ракета Носій" as Rocket order 15 #99FF99 
 
 
-User -> Owner: Запит на використання
-activate User
-activate Owner
-Owner -> Tech: Запит доступності ракети
-activate Tech
-Tech -> Rocket: Наявність та стан ракети 
-activate Rocket
-Rocket -> Tech: Дані про ракету
-deactivate Rocket
-Tech -> Owner: Ракета доступна 
-deactivate Tech
-Owner -> User: Використання можливе, надсилання договору 
-deactivate User 
-deactivate Owner
+' User -> Owner: Запит на використання
+' activate User
+' activate Owner
+' Owner -> Tech: Запит доступності ракети
+' activate Tech
+' Tech -> Rocket: Наявність та стан ракети 
+' activate Rocket
+' Rocket -> Tech: Дані про ракету
+' deactivate Rocket
+' Tech -> Owner: Ракета доступна 
+' deactivate Tech
+' Owner -> User: Використання можливе, надсилання договору 
+' deactivate User 
+' deactivate Owner
 
-User -> Owner: Згода та надсилання грошей
-Owner -> User: Надання ракети 
+' User -> Owner: Згода та надсилання грошей
 
+' Owner -> User: Перевірка оплати та Надання ракети 
 
+' group Домовленість про використання
+'       User -> Owner : Запит на використання
+
+'       activate Owner
+'       Owner -> Tech : Запит наявності та \n доступності ракети
+'       deactivate Owner
+
+'       activate Tech
+'       Tech -> Rocket : Перевірка стану \n  ракети
+'       Tech <- Rocket : Необхідні дані
+'       Tech -> Owner : Ракета наявна \n та доступна
+'       deactivate Tech
+
+'       activate Owner
+'       Owner -> User : Використання можливе,\n надсилання договору
+'       deactivate Owner
+
+'       activate User
+'       User -> Owner : Згода та надсилання коштів
+'       deactivate User
+
+'       activate Owner
+'       Owner -> User : Бронювання ракети та\n надсилання коду
+'       deactivate Owner
+' end
+
+' group Підготовка до запуску
+'       User -> Owner : Запит на запуск
+
+'       activate Owner
+'       Owner -> Tech: Стан ракети та \n наявні ресурси
+'       deactivate Owner
+
+'       activate Tech
+'       Tech -> Personal :  Стан ракети та ресурсів
+'       deactivate Tech
+
+'       activate Personal
+'       Personal -> Rocket : Перевірка та усунення \n нестачі ресурсів
+'       Rocket -> Personal
+'       Personal -> Tech : Все наявно та працює
+'       deactivate Personal
+
+'       activate Tech
+'       Tech -> Operator :  Наявність зв'язку
+'       deactivate Tech
+
+'       activate Operator
+'       Operator -> Rocket : Перевірка зв'язку між  \n ракетою-носієм та диспетчерами
+'       Operator -> DispRocket
+'       Operator -> DispSudno
+'       Operator -> Tech : Зв'язок доступний
+'       deactivate Operator
+
+'       activate Tech
+'       Tech -> Owner :  Запуск можливий
+'       deactivate Tech
+
+'       activate Owner
+'       Owner -> Meteorolog: Погодні умови
+'       deactivate Owner
+
+'       activate Meteorolog
+'       Meteorolog -> Meteorolog : Ознайомлення з \n показами
+'       Meteorolog -> Owner : Політ доступний
+'       deactivate Meteorolog
+
+'       activate Owner
+'       Owner -> User: Ракета готова до запуску
+'       deactivate Owner
+' end
+
+group Операція та повернення
+      User -> Owner : Запуск
+
+      activate Owner
+      Owner -> FlyControl: Початок операції
+      deactivate Owner
+
+      activate FlyControl
+      FlyControl -> Rocket: Активація двигунів і взліт
+
+      activate Rocket
+      activate DispRocket
+      Rocket -> DispRocket : Координати
+      DispRocket -> FlyControl : Нова траєкторія
+      FlyControl -> Rocket : Задання нової траєкторії
+
+      Rocket -> Rocket : Досягнення необхідної \n висоти та скидання грузу
+      Rocket -> DispRocket : Повернення на базу
+      DispRocket -> FlyControl : Слідкування за поверненням
+      FlyControl -> Rocket : Корекція повернення
+
+      Rocket -> DispRocket : Досягнення низької висоти
+      activate DispSudno
+      DispRocket -> DispSudno: Активація платформи
+      Rocket -> FlyControl : Приземлення 
+
+      deactivate Rocket
+      deactivate DispRocket
+      deactivate DispSudno
+
+      FlyControl -> Owner: Завершення операції
+      deactivate FlyControl
+
+      activate Owner
+      Owner -> User: Об'єкт доставлено успішно
+      deactivate Owner
+end
 @enduml
